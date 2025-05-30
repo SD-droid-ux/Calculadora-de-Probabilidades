@@ -12,7 +12,8 @@ abas = st.tabs([
     "3️⃣ Frequência (%)", 
     "4️⃣ Gráfico de Linhas", 
     "5️⃣ Gráfico de Barras",  
-    "🧮 Calculadora Simples"
+    "🧮 Calculadora Média Fechamentos Acima da Média (9)",
+    "🧮 Calculadora Média Fechamentos Abaixo da Média (9)"
 ])
 
 # Variáveis compartilhadas
@@ -104,6 +105,38 @@ with abas[4]:
 
 # --- Aba 6: Calculadora Simples (Independente) ---
 with abas[5]:
+    st.subheader("📘 Média Móvel de 9 Períodos")
+
+    entrada_texto = st.text_area("Cole sua lista de números (separados por vírgula ou quebra de linha):", "")
+
+    if st.button("Calcular Médias"):
+        try:
+            # Normaliza entrada e converte para float
+            numeros = [float(x.strip()) for x in entrada_texto.replace("\n", ",").split(",") if x.strip()]
+
+            if len(numeros) < 9:
+                st.warning("Você precisa inserir ao menos 9 números para calcular médias móveis.")
+            else:
+                # Calcula médias móveis de 9 períodos
+                medias = [sum(numeros[i:i+9]) / 9 for i in range(len(numeros) - 8)]
+
+                st.write("📋 **Médias Móveis (9 períodos):**")
+                st.code("\n".join([f"{media:.3f}" for media in medias]))
+
+                # Gráfico
+                plt.figure(figsize=(10, 4))
+                plt.plot(medias, marker='o', linestyle='-', color='purple')
+                plt.title("Evolução das Médias Móveis (9 Períodos)")
+                plt.xlabel("Período")
+                plt.ylabel("Média")
+                plt.grid(True, linestyle="--", alpha=0.6)
+                st.pyplot(plt)
+
+        except Exception as e:
+            st.error("Erro ao processar os dados. Verifique se os números estão corretos e separados por vírgula ou nova linha.")
+
+# --- Aba 7: Calculadora Simples (Independente) ---
+with abas[6]:
     st.subheader("📘 Média Móvel de 9 Períodos")
 
     entrada_texto = st.text_area("Cole sua lista de números (separados por vírgula ou quebra de linha):", "")
