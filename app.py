@@ -5,15 +5,15 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Análises Numéricas", layout="wide")
 st.title("📊 Ferramentas de Análise Numérica")
 
+# Abas superiores (corrigido com a vírgula entre as últimas duas abas)
 abas = st.tabs([
     "1️⃣ Soma Condicional", 
     "2️⃣ Contagem de Frequência", 
     "3️⃣ Frequência (%)", 
     "4️⃣ Gráfico de Linhas", 
-    "5️⃣ Gráfico de Barras",  # <- Aqui faltava a vírgula
+    "5️⃣ Gráfico de Barras",  # vírgula corrigida aqui ✅
     "🧮 Calculadora Simples"
 ])
-
 
 # Variáveis compartilhadas
 if "resultados" not in st.session_state:
@@ -46,7 +46,7 @@ with abas[0]:
 
             st.write("📋 **Resultado da Coluna Acumulada:**")
             st.code("\n".join([str(r) for r in resultados]))
-        except Exception as e:
+        except Exception:
             st.error("Erro ao processar a lista. Verifique se os números estão separados por vírgulas.")
 
 # --- Aba 2: Contagem de Frequência ---
@@ -103,7 +103,7 @@ with abas[4]:
         st.info("ℹ️ Gere a frequência em porcentagem primeiro (aba 3).")
 
 # --- Aba 6: Calculadora Simples (Independente) ---
-with abas[6]:
+with abas[5]:
     st.subheader("📘 Calculadora de Média Aritmética (9 Períodos)")
 
     col1, col2, col3 = st.columns(3)
@@ -127,4 +127,5 @@ with abas[6]:
         valores = [p1, p2, p3, p4, p5, p6, p7, p8, p9]
         media = sum(valores) / 9
         st.success(f"Média Aritmética dos 9 períodos: {media:.2f}")
+
 
