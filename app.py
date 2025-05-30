@@ -109,7 +109,7 @@ with abas[5]:
 
     entrada_texto = st.text_area("Cole sua lista de números de Fechamentos Acima da Média (9) (separados por vírgula ou quebra de linha):", "")
 
-    if st.button("Calcular Médias"):
+    if st.button("Calcular Médias de Fechamentos Acima"):
         try:
             # Normaliza entrada e converte para float
             numeros = [float(x.strip()) for x in entrada_texto.replace("\n", ",").split(",") if x.strip()]
@@ -141,7 +141,7 @@ with abas[6]:
 
     entrada_texto = st.text_area("Cole sua lista de números de Fechamentos Abaixo da Média (9) (separados por vírgula ou quebra de linha):", "")
 
-    if st.button("Calcular Médias"):
+    if st.button("Calcular Médias de Fechamentos Abaixo"):
         try:
             # Normaliza entrada e converte para float
             numeros = [float(x.strip()) for x in entrada_texto.replace("\n", ",").split(",") if x.strip()]
