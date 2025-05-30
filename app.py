@@ -107,7 +107,7 @@ with abas[4]:
 with abas[5]:
     st.subheader("📘 Média Móvel de 9 Períodos")
 
-    entrada_texto = st.text_area("Cole sua lista de números (separados por vírgula ou quebra de linha):", "")
+    entrada_texto = st.text_area("Cole sua lista de números de Fechamentos Acima da Média (9) (separados por vírgula ou quebra de linha):", "")
 
     if st.button("Calcular Médias"):
         try:
@@ -139,7 +139,7 @@ with abas[5]:
 with abas[6]:
     st.subheader("📘 Média Móvel de 9 Períodos")
 
-    entrada_texto = st.text_area("Cole sua lista de números (separados por vírgula ou quebra de linha):", "")
+    entrada_texto = st.text_area("Cole sua lista de números de Fechamentos Abaixo da Média (9) (separados por vírgula ou quebra de linha):", "")
 
     if st.button("Calcular Médias"):
         try:
