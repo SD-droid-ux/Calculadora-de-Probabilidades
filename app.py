@@ -1,94 +1,102 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 from collections import Counter
+import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Analisador de Dados", layout="wide")
-st.title("🔍 Analisador de Lista Numérica")
+st.set_page_config(page_title="Análises Numéricas", layout="wide")
+st.title("📊 Ferramentas de Análise Numérica")
 
-# Entrada dos dados
-entrada = st.text_area("Digite a lista de números separados por vírgula:", "1, -1, 2, 2, -2, -2, -2, 3")
+# Abas superiores
+abas = st.tabs([
+    "1️⃣ Soma Condicional", 
+    "2️⃣ Contagem de Frequência", 
+    "3️⃣ Frequência (%)", 
+    "4️⃣ Gráfico de Linhas", 
+    "5️⃣ Gráfico de Barras"
+])
 
-# Função para processar a entrada
-def processar_lista(entrada):
-    try:
-        numeros = [float(n.strip()) for n in entrada.split(",") if n.strip() != ""]
-        return numeros
-    except:
-        st.error("Erro ao processar os números. Certifique-se de usar o formato correto: 1, 2, -3, 4")
-        return []
+# Variáveis compartilhadas
+if "resultados" not in st.session_state:
+    st.session_state.resultados = []
 
-numeros = processar_lista(entrada)
+# Função para processar a soma condicional
+def calcular_soma_condicional(numeros):
+    resultados = []
+    soma = 0
+    anterior = None
+    for n in numeros:
+        if anterior is None or (n > 0 and anterior <= 0) or (n < 0 and anterior >= 0) or n != anterior:
+            soma = n
+        else:
+            soma += n
+        resultados.append(soma)
+        anterior = n
+    return resultados
 
-if numeros:
-    aba = st.selectbox("Escolha a operação:", [
-        "1 - Coluna Acumulada",
-        "2 - Frequência dos Valores",
-        "3 - Distribuição em Porcentagem",
-        "4 - Gráfico de Linha",
-        "5 - Gráfico de Barras"
-    ])
+# --- Aba 1: Soma Condicional ---
+with abas[0]:
+    st.subheader("🔢 Soma Condicional com Regra de Sinais")
+    entrada = st.text_area("Cole sua lista de números separados por vírgulas (ex: 1, -1, 1, 2, -2)", "")
+    
+    if st.button("Calcular Soma Condicional"):
+        try:
+            numeros = [float(x.strip()) for x in entrada.split(",") if x.strip()]
+            resultados = calcular_soma_condicional(numeros)
+            st.session_state.resultados = resultados  # Armazena para uso posterior
 
-    # Aba 1 - Coluna Acumulada
-    if aba.startswith("1"):
-        resultados = []
-        soma = 0
-        anterior = None
+            st.write("📋 **Resultado da Coluna Acumulada:**")
+            st.code("\n".join([str(r) for r in resultados]))
+        except Exception as e:
+            st.error("Erro ao processar a lista. Verifique se os números estão separados por vírgulas.")
 
-        for n in numeros:
-            if anterior is None or (n > 0 and anterior <= 0) or (n < 0 and anterior >= 0) or n != anterior:
-                soma = n
-            else:
-                soma += n
-            resultados.append(soma)
-            anterior = n
-
-        st.subheader("📋 Resultado da Coluna Acumulada:")
-        st.write(resultados)
-
-    # Aba 2 - Frequência dos Valores
-    elif aba.startswith("2"):
-        contagem = Counter(numeros)
-        st.subheader("📊 Frequência dos Valores:")
+# --- Aba 2: Contagem de Frequência ---
+with abas[1]:
+    st.subheader("📊 Contagem de Frequência dos Resultados")
+    if st.session_state.resultados:
+        contagem = Counter(st.session_state.resultados)
         for valor in sorted(contagem.keys(), reverse=True):
             st.write(f"{valor:.3f} = {contagem[valor]}")
+    else:
+        st.info("ℹ️ Calcule a soma condicional primeiro (aba 1).")
 
-    # Aba 3 - Distribuição em Porcentagem
-    elif aba.startswith("3"):
-        contagem = Counter(numeros)
+# --- Aba 3: Frequência em Porcentagem ---
+with abas[2]:
+    st.subheader("📈 Frequência em Porcentagem")
+    if st.session_state.resultados:
+        contagem = Counter(st.session_state.resultados)
         total = sum(contagem.values())
-        st.subheader("📈 Distribuição em Porcentagem:")
         for valor in sorted(contagem.keys()):
             porcentagem = (contagem[valor] / total) * 100
             st.write(f"{valor:.3f} = {porcentagem:.2f}%")
+        # Armazena para os gráficos
+        st.session_state.valores = list(sorted(contagem.keys()))
+        st.session_state.porcentagens = [(contagem[v] / total) * 100 for v in st.session_state.valores]
+    else:
+        st.info("ℹ️ Calcule a soma condicional primeiro (aba 1).")
 
-    # Aba 4 - Gráfico de Linha
-    elif aba.startswith("4"):
-        contagem = Counter(numeros)
-        total = sum(contagem.values())
-        valores = sorted(contagem.keys())
-        porcentagens = [(contagem[v] / total) * 100 for v in valores]
+# --- Aba 4: Gráfico de Linhas ---
+with abas[3]:
+    st.subheader("📉 Gráfico de Distribuição (Linhas)")
+    if "valores" in st.session_state and "porcentagens" in st.session_state:
+        plt.figure(figsize=(10, 4))
+        plt.plot(st.session_state.valores, st.session_state.porcentagens, marker='o', linestyle='-', color='blue')
+        plt.title("Distribuição de Probabilidade (%)")
+        plt.xlabel("Valor")
+        plt.ylabel("Probabilidade (%)")
+        plt.grid(True, linestyle="--", alpha=0.6)
+        st.pyplot(plt)
+    else:
+        st.info("ℹ️ Gere a frequência em porcentagem primeiro (aba 3).")
 
-        st.subheader("📉 Gráfico de Linha - Distribuição de Probabilidade")
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(valores, porcentagens, marker='o', linestyle='-', color='blue')
-        ax.set_title('Distribuição de Probabilidade (%)')
-        ax.set_xlabel('Valor')
-        ax.set_ylabel('Probabilidade (%)')
-        ax.grid(True, linestyle='--', alpha=0.6)
-        st.pyplot(fig)
-
-    # Aba 5 - Gráfico de Barras
-    elif aba.startswith("5"):
-        contagem = Counter(numeros)
-        total = sum(contagem.values())
-        valores = sorted(contagem.keys())
-        porcentagens = [(contagem[v] / total) * 100 for v in valores]
-
-        st.subheader("📊 Gráfico de Barras - Distribuição de Probabilidade")
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.bar([str(v) for v in valores], porcentagens, color='skyblue')
-        ax.set_title('Distribuição de Probabilidade (%)')
-        ax.set_xlabel('Valor')
-        ax.set_ylabel('Probabilidade (%)')
-        ax.grid(axis='y', linestyle='--', alpha=0.6)
-        st.pyplot(fig)
+# --- Aba 5: Gráfico de Barras ---
+with abas[4]:
+    st.subheader("📊 Gráfico de Distribuição (Barras)")
+    if "valores" in st.session_state and "porcentagens" in st.session_state:
+        plt.figure(figsize=(10, 4))
+        plt.bar(st.session_state.valores, st.session_state.porcentagens, color='green', alpha=0.7)
+        plt.title("Distribuição de Probabilidades (%)")
+        plt.xlabel("Valor")
+        plt.ylabel("Probabilidade (%)")
+        plt.grid(axis='y', linestyle='--', alpha=0.5)
+        st.pyplot(plt)
+    else:
+        st.info("ℹ️ Gere a frequência em porcentagem primeiro (aba 3).")
