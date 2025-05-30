@@ -15,7 +15,7 @@ abas = st.tabs([
 ])
   
    
-])
+
 
 # Variáveis compartilhadas
 if "resultados" not in st.session_state:
