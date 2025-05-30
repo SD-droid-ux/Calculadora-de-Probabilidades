@@ -5,15 +5,16 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Análises Numéricas", layout="wide")
 st.title("📊 Ferramentas de Análise Numérica")
 
-# Abas superiores
 abas = st.tabs([
     "1️⃣ Soma Condicional", 
     "2️⃣ Contagem de Frequência", 
     "3️⃣ Frequência (%)", 
     "4️⃣ Gráfico de Linhas", 
     "5️⃣ Gráfico de Barras",  
-    "🧮 Calculadora Média Fechamentos Acima da Média (9)",
-    "🧮 Calculadora Média Fechamentos Abaixo da Média (9)"
+    "🖊️ Gráfico Interativo"
+])
+  
+   
 ])
 
 # Variáveis compartilhadas
@@ -103,66 +104,47 @@ with abas[4]:
     else:
         st.info("ℹ️ Gere a frequência em porcentagem primeiro (aba 3).")
 
-# --- Aba 6: Calculadora Simples (Independente) ---
+import plotly.graph_objects as go
+
+# --- Aba 6: Gráfico Interativo com Ferramentas de Desenho ---
 with abas[5]:
-    st.subheader("📘 Média Móvel de 9 Períodos")
+    st.subheader("🖊️ Gráfico Interativo (Desenho e Pan)")
 
-    entrada_texto = st.text_area("Cole sua lista de números de Fechamentos Acima da Média (9) (separados por vírgula ou quebra de linha):", "")
+    if st.session_state.resultados:
+        valores = st.session_state.resultados
+        x = list(range(len(valores)))
 
-    if st.button("Calcular Médias de Fechamentos Acima"):
-        try:
-            # Normaliza entrada e converte para float
-            numeros = [float(x.strip()) for x in entrada_texto.replace("\n", ",").split(",") if x.strip()]
+        fig = go.Figure()
 
-            if len(numeros) < 9:
-                st.warning("Você precisa inserir ao menos 9 números para calcular médias móveis.")
-            else:
-                # Calcula médias móveis de 9 períodos
-                medias = [sum(numeros[i:i+9]) / 9 for i in range(len(numeros) - 8)]
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=valores,
+            mode='lines+markers',
+            name='Resultados',
+            line=dict(color='blue'),
+            marker=dict(size=6)
+        ))
 
-                st.write("📋 **Médias Móveis (9 períodos):**")
-                st.code("\n".join([f"{media:.3f}" for media in medias]))
+        fig.update_layout(
+            title='Gráfico com Ferramentas de Desenho e Navegação',
+            xaxis_title='Índice',
+            yaxis_title='Valor',
+            hovermode='x unified',
+            template='plotly_white',
+            dragmode='pan',
+            newshape_line_color='red',
+            modebar_add=[
+                'drawline',
+                'drawopenpath',
+                'drawrect',
+                'drawcircle',
+                'eraseshape',
+                'pan'
+            ]
+        )
 
-                # Gráfico
-                plt.figure(figsize=(10, 4))
-                plt.plot(medias, marker='o', linestyle='-', color='purple')
-                plt.title("Evolução das Médias Móveis (9 Períodos)")
-                plt.xlabel("Período")
-                plt.ylabel("Média")
-                plt.grid(True, linestyle="--", alpha=0.6)
-                st.pyplot(plt)
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.info("ℹ️ Calcule os resultados na aba 1 (Soma Condicional) para exibir o gráfico.")
 
-        except Exception as e:
-            st.error("Erro ao processar os dados. Verifique se os números estão corretos e separados por vírgula ou nova linha.")
 
-# --- Aba 7: Calculadora Simples (Independente) ---
-with abas[6]:
-    st.subheader("📘 Média Móvel de 9 Períodos")
-
-    entrada_texto = st.text_area("Cole sua lista de números de Fechamentos Abaixo da Média (9) (separados por vírgula ou quebra de linha):", "")
-
-    if st.button("Calcular Médias de Fechamentos Abaixo"):
-        try:
-            # Normaliza entrada e converte para float
-            numeros = [float(x.strip()) for x in entrada_texto.replace("\n", ",").split(",") if x.strip()]
-
-            if len(numeros) < 9:
-                st.warning("Você precisa inserir ao menos 9 números para calcular médias móveis.")
-            else:
-                # Calcula médias móveis de 9 períodos
-                medias = [sum(numeros[i:i+9]) / 9 for i in range(len(numeros) - 8)]
-
-                st.write("📋 **Médias Móveis (9 períodos):**")
-                st.code("\n".join([f"{media:.3f}" for media in medias]))
-
-                # Gráfico
-                plt.figure(figsize=(10, 4))
-                plt.plot(medias, marker='o', linestyle='-', color='purple')
-                plt.title("Evolução das Médias Móveis (9 Períodos)")
-                plt.xlabel("Período")
-                plt.ylabel("Média")
-                plt.grid(True, linestyle="--", alpha=0.6)
-                st.pyplot(plt)
-
-        except Exception as e:
-            st.error("Erro ao processar os dados. Verifique se os números estão corretos e separados por vírgula ou nova linha.")
