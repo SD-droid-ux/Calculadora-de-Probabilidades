@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Análises Numéricas", layout="wide")
 st.title("📊 Ferramentas de Análise Numérica")
 
-# Abas superiores (corrigido com a vírgula entre as últimas duas abas)
+# Abas superiores
 abas = st.tabs([
     "1️⃣ Soma Condicional", 
     "2️⃣ Contagem de Frequência", 
     "3️⃣ Frequência (%)", 
     "4️⃣ Gráfico de Linhas", 
-    "5️⃣ Gráfico de Barras",  # vírgula corrigida aqui ✅
+    "5️⃣ Gráfico de Barras",  
     "🧮 Calculadora Simples"
 ])
 
@@ -104,28 +104,32 @@ with abas[4]:
 
 # --- Aba 6: Calculadora Simples (Independente) ---
 with abas[5]:
-    st.subheader("📘 Calculadora de Média Aritmética (9 Períodos)")
+    st.subheader("📘 Média Móvel de 9 Períodos")
 
-    col1, col2, col3 = st.columns(3)
+    entrada_texto = st.text_area("Cole sua lista de números (separados por vírgula ou quebra de linha):", "")
 
-    with col1:
-        p1 = st.number_input("Período 1", value=0.0)
-        p4 = st.number_input("Período 4", value=0.0)
-        p7 = st.number_input("Período 7", value=0.0)
+    if st.button("Calcular Médias"):
+        try:
+            # Normaliza entrada e converte para float
+            numeros = [float(x.strip()) for x in entrada_texto.replace("\n", ",").split(",") if x.strip()]
 
-    with col2:
-        p2 = st.number_input("Período 2", value=0.0)
-        p5 = st.number_input("Período 5", value=0.0)
-        p8 = st.number_input("Período 8", value=0.0)
+            if len(numeros) < 9:
+                st.warning("Você precisa inserir ao menos 9 números para calcular médias móveis.")
+            else:
+                # Calcula médias móveis de 9 períodos
+                medias = [sum(numeros[i:i+9]) / 9 for i in range(len(numeros) - 8)]
 
-    with col3:
-        p3 = st.number_input("Período 3", value=0.0)
-        p6 = st.number_input("Período 6", value=0.0)
-        p9 = st.number_input("Período 9", value=0.0)
+                st.write("📋 **Médias Móveis (9 períodos):**")
+                st.code("\n".join([f"{media:.3f}" for media in medias]))
 
-    if st.button("Calcular Média"):
-        valores = [p1, p2, p3, p4, p5, p6, p7, p8, p9]
-        media = sum(valores) / 9
-        st.success(f"Média Aritmética dos 9 períodos: {media:.2f}")
+                # Gráfico
+                plt.figure(figsize=(10, 4))
+                plt.plot(medias, marker='o', linestyle='-', color='purple')
+                plt.title("Evolução das Médias Móveis (9 Períodos)")
+                plt.xlabel("Período")
+                plt.ylabel("Média")
+                plt.grid(True, linestyle="--", alpha=0.6)
+                st.pyplot(plt)
 
-
+        except Exception as e:
+            st.error("Erro ao processar os dados. Verifique se os números estão corretos e separados por vírgula ou nova linha.")
