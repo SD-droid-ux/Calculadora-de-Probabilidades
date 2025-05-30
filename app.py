@@ -11,8 +11,8 @@ abas = st.tabs([
     "2️⃣ Contagem de Frequência", 
     "3️⃣ Frequência (%)", 
     "4️⃣ Gráfico de Linhas", 
-    "5️⃣ Gráfico de Barras"
-    "🧮 Calculadora Simples"
+    "5️⃣ Gráfico de Barras",
+    "🧮 Calculadora Simples",
 ])
 
 # Variáveis compartilhadas
