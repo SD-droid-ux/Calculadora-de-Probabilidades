@@ -12,6 +12,7 @@ abas = st.tabs([
     "3️⃣ Frequência (%)", 
     "4️⃣ Gráfico de Linhas", 
     "5️⃣ Gráfico de Barras"
+    "🧮 Calculadora Simples"
 ])
 
 # Variáveis compartilhadas
@@ -100,3 +101,30 @@ with abas[4]:
         st.pyplot(plt)
     else:
         st.info("ℹ️ Gere a frequência em porcentagem primeiro (aba 3).")
+
+# --- Aba 6: Calculadora Simples (Independente) ---
+with abas[6]:
+    st.subheader("📘 Calculadora de Média Aritmética (9 Períodos)")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        p1 = st.number_input("Período 1", value=0.0)
+        p4 = st.number_input("Período 4", value=0.0)
+        p7 = st.number_input("Período 7", value=0.0)
+
+    with col2:
+        p2 = st.number_input("Período 2", value=0.0)
+        p5 = st.number_input("Período 5", value=0.0)
+        p8 = st.number_input("Período 8", value=0.0)
+
+    with col3:
+        p3 = st.number_input("Período 3", value=0.0)
+        p6 = st.number_input("Período 6", value=0.0)
+        p9 = st.number_input("Período 9", value=0.0)
+
+    if st.button("Calcular Média"):
+        valores = [p1, p2, p3, p4, p5, p6, p7, p8, p9]
+        media = sum(valores) / 9
+        st.success(f"Média Aritmética dos 9 períodos: {media:.2f}")
+
