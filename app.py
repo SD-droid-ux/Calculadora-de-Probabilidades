@@ -40,7 +40,15 @@ with abas[0]:
         try:
             if arquivo.name.endswith(".txt"):
                 conteudo = arquivo.read().decode("utf-8").splitlines()
-                numeros = [float(linha.strip()) for linha in conteudo if linha.strip()]
+                numeros = []
+                for linha in conteudo:
+                    linha_limpa = linha.strip().rstrip(",").replace(",", ".")
+                    if linha_limpa:
+                        try:
+                            numeros.append(float(linha_limpa))
+                        except ValueError:
+                            continue  # ignora linhas inválidas
+
             elif arquivo.name.endswith(".xlsx"):
                 df = pd.read_excel(arquivo)
                 primeira_coluna = df.columns[0]
