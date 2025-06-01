@@ -30,21 +30,32 @@ def calcular_soma_condicional(numeros):
         anterior = n
     return resultados
 
-# Aba 1
+# Aba 1: Upload e Soma Condicional com Regra de Sinais
 with abas[0]:
-    st.subheader("🔢 Soma Condicional com Regra de Sinais")
-    entrada = st.text_area("Cole sua lista de números separados por vírgulas (ex: 1, -1, 1, 2, -2)", "")
+    st.subheader("📁 Upload de Arquivo com Números")
 
-    if st.button("Calcular Soma Condicional"):
+    arquivo = st.file_uploader("Envie um arquivo .txt ou .xlsx com uma lista de números", type=["txt", "xlsx"])
+
+    if arquivo is not None:
         try:
-            numeros = [float(x.strip()) for x in entrada.split(",") if x.strip()]
+            if arquivo.name.endswith(".txt"):
+                conteudo = arquivo.read().decode("utf-8").splitlines()
+                numeros = [float(linha.strip()) for linha in conteudo if linha.strip()]
+            elif arquivo.name.endswith(".xlsx"):
+                df = pd.read_excel(arquivo)
+                primeira_coluna = df.columns[0]
+                numeros = [float(x) for x in df[primeira_coluna] if pd.notnull(x)]
+
             resultados = calcular_soma_condicional(numeros)
             st.session_state.resultados = resultados
 
             st.write("📋 **Resultado da Coluna Acumulada:**")
             st.code("\n".join([str(r) for r in resultados]))
-        except Exception:
-            st.error("Erro ao processar a lista. Verifique se os números estão separados por vírgulas.")
+
+        except Exception as e:
+            st.error(f"Erro ao processar o arquivo: {str(e)}")
+    else:
+        st.info("ℹ️ Envie um arquivo .txt ou .xlsx para processar a soma condicional.")
 
 # Aba 2
 with abas[1]:
