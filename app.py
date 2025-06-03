@@ -171,7 +171,7 @@ def calcular_probabilidades_transicoes(sinais, max_seq=10):
 
     for seq_len in range(1, max_seq + 1):
         for i in range(n - seq_len):
-            sequencia = tuple(sinais[i:i+seq_len])
+            sequencia = tuple(sinais[i:i + seq_len])
             proximo = sinais[i + seq_len]
             if proximo == 0:
                 continue
@@ -205,19 +205,21 @@ with abas[6]:
     if arquivo_trans is not None:
         try:
             if arquivo_trans.name.endswith(".txt"):
-    conteudo = arquivo_trans.read().decode("utf-8").splitlines()
-    dados = [float(l.strip().replace(",", ".")) for l in conteudo if l.strip()]
-elif arquivo_trans.name.endswith(".xlsx"):
-    df = pd.read_excel(arquivo_trans)
-    primeira_coluna = df.columns[0]
-    dados = [float(x) for x in df[primeira_coluna] if pd.notnull(x)]
-
+                conteudo = arquivo_trans.read().decode("utf-8").splitlines()
+                dados = [float(l.strip().replace(",", "."))
+                         for l in conteudo if l.strip()]
+            elif arquivo_trans.name.endswith(".xlsx"):
+                df = pd.read_excel(arquivo_trans)
+                primeira_coluna = df.columns[0]
+                dados = [float(x) for x in df[primeira_coluna] if pd.notnull(x)]
 
             sinais = transformar_em_sinais(dados)
             df_resultados = calcular_probabilidades_transicoes(sinais, max_seq=10)
 
             st.dataframe(df_resultados.head(50), use_container_width=True)
+
         except Exception as e:
             st.error(f"Erro ao processar o arquivo: {str(e)}")
     else:
         st.info("ℹ️ Envie um arquivo .txt ou .xlsx para analisar as transições.")
+
