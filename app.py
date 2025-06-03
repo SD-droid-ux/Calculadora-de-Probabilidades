@@ -205,12 +205,13 @@ with abas[6]:
     if arquivo_trans is not None:
         try:
             if arquivo_trans.name.endswith(".txt"):
-                conteudo = arquivo_trans.read().decode("utf-8").splitlines()
-                dados = [int(l.strip().replace(",", "")) for l in conteudo if l.strip()]
-            elif arquivo_trans.name.endswith(".xlsx"):
-                df = pd.read_excel(arquivo_trans)
-                primeira_coluna = df.columns[0]
-                dados = [int(x) for x in df[primeira_coluna] if pd.notnull(x)]
+    conteudo = arquivo_trans.read().decode("utf-8").splitlines()
+    dados = [float(l.strip().replace(",", ".")) for l in conteudo if l.strip()]
+elif arquivo_trans.name.endswith(".xlsx"):
+    df = pd.read_excel(arquivo_trans)
+    primeira_coluna = df.columns[0]
+    dados = [float(x) for x in df[primeira_coluna] if pd.notnull(x)]
+
 
             sinais = transformar_em_sinais(dados)
             df_resultados = calcular_probabilidades_transicoes(sinais, max_seq=10)
